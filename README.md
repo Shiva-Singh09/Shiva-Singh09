@@ -168,8 +168,11 @@ Learned ASP.NET and SQL Server for web development.
 
 I'm open to **internships, collaborations, and interesting projects** in software development and AI/ML.
 
-[![GitHub](https://img.shields.io/badge/GitHub-Shiva--Singh09-181717?style=flat&logo=github)](https://github.com/Shiva-Singh09)
+[![GitHub](https://img.shields.io/badge/GitHub-Shiva--Singh09-181717?style=flat&logo=github&logoColor=white)](https://github.com/Shiva-Singh09)
 [![Email](https://img.shields.io/badge/Email-shivasingh09114%40gmail.com-EA4335?style=flat&logo=gmail&logoColor=white)](mailto:shivasingh09114@gmail.com)
+[![Call Me](https://img.shields.io/badge/Call%20Me-%2B91%208303872467-25D366?style=flat&logo=phone&logoColor=white)](tel:+918303872467)
+[![Resume](https://img.shields.io/badge/Resume-View%20%2F%20Download-4285F4?style=flat&logo=googledrive&logoColor=white)](./resume.pdf)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Add%20your%20profile%20URL-0A66C2?style=flat&logo=linkedin&logoColor=white)](#linkedin-placeholder)
 
 ---
 
