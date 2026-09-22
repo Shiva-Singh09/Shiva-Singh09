@@ -5,7 +5,7 @@
  * (shiva-character.glb) may be swapped later for a better likeness without
  * rewriting the portfolio. Everything character-specific lives HERE:
  *   - model path (URL)
- *   - animation clip names
+ *   - animation clip names + logical pose names
  *   - scale / calibration
  *   - position / rotation offsets
  *   - animation fade configuration
@@ -59,12 +59,28 @@ export const CHARACTER_TRANSFORM = {
   },
 }
 
+// Logical pose names scene choreography may request through `poseRef`.
+// Each maps to a clip via CHARACTER_CLIPS (case-insensitive resolution in
+// the controller). Jump is available but never forced into the story.
+export const CHARACTER_POSES = {
+  idle: 'idle',
+  walk: 'walk',
+  wave: 'wave',
+  jump: 'jump',
+}
+
 // Animation blending configuration (seconds). Used by the controller hook
-// for clean Walk ⇄ Idle crossfades (no snapping, no foot-slide hacks).
+// for clean Walk ⇄ Idle (and Wave) crossfades — no snapping, no foot-slide
+// hacks. `<pose>FadeIn/FadeOut` keys are looked up per pose; entries fall
+// back to defaultFadeIn/defaultFadeOut for poses without a dedicated pair.
 export const CHARACTER_ANIMATION = {
   walkFadeIn: 0.4,
   walkFadeOut: 0.35,
   idleFadeIn: 0.35,
   idleFadeOut: 0.25,
+  waveFadeIn: 0.4,
+  waveFadeOut: 0.3,
+  defaultFadeIn: 0.35,
+  defaultFadeOut: 0.3,
   exitFade: 0.3,
 }

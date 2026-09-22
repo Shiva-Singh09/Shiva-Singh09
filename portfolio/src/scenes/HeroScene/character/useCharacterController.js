@@ -19,13 +19,23 @@
  * - Plays Walk while `active` (Hero 'entering' phase), crossfades to Idle
  *   otherwise. Jump/Wave stay loaded and are exposed via `playClip` for
  *   future use — never auto-played by Hero.
+ * - SECTION MODE: when a `poseRef` is supplied (scroll-driven scenes), the
+ *   legacy `active` effect is skipped and a useFrame poll crossfades to
+ *   `poseRef.current` ONLY when the value changes (guarded by lastPose) —
+ *   scroll frames can never restart a clip.
+ * - The cached GLTF scene is a singleton (one parent max), so each hook
+ *   instance returns a skeleton-aware CLONE: Hero + every lazy section canvas
+ *   can host the same asset simultaneously without re-parenting conflicts.
  * - Reports detected clip names upward once (SceneDirector heroClips).
  *
  * Returns: { group, scene, names, scale, lift, playClip, actions }
+ *   (`scene` is this instance's clone of the configured GLB scene.)
  */
 import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { useAnimations, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
+import { clone as skeletonClone } from 'three/examples/jsm/utils/SkeletonUtils.js'
 import { CHARACTER_ANIMATION, CHARACTER_ASSET, CHARACTER_CLIPS, CHARACTER_TRANSFORM } from './characterConfig.js'
 
 const findKey = (names, wanted) => {
@@ -35,10 +45,16 @@ const findKey = (names, wanted) => {
   return names.find((n) => n.toLowerCase() === String(wanted).toLowerCase()) ?? null
 }
 
-export function useCharacterController({ active, reducedMotion, onClips }) {
+export function useCharacterController({ active, poseRef, reducedMotion, onClips }) {
   const group = useRef(null)
   const reported = useRef(false)
   const { scene, animations } = useGLTF(CHARACTER_ASSET.url)
+  // Skeleton-aware per-canvas instance of the shared, cached GLB scene. The
+  // original can only live under one parent (one canvas); cloning lets the
+  // Hero and each lazy section scene mount the SAME asset at the same time.
+  // Still driven entirely by characterConfig.js — a GLB swap changes nothing
+  // outside this layer.
+  const instance = useMemo(() => skeletonClone(scene), [scene])
   const { actions, names, mixer } = useAnimations(animations, group)
 
   // Generic calibration from the model's own bounding box — no per-mesh,
@@ -59,13 +75,13 @@ export function useCharacterController({ active, reducedMotion, onClips }) {
   }, [scene])
 
   useEffect(() => {
-    scene.traverse((o) => {
+    instance.traverse((o) => {
       if (o.isMesh) {
         o.castShadow = true
         o.frustumCulled = false
       }
     })
-  }, [scene])
+  }, [instance])
 
   // Report detected clip names upward exactly once (Jump/Wave included —
   // loaded and available, never auto-played in Hero).
@@ -76,9 +92,11 @@ export function useCharacterController({ active, reducedMotion, onClips }) {
     }
   }, [names, onClips])
 
-  // Clip state machine: Walk while entering, Idle otherwise.
+  // Clip state machine (HERO/LEGACY MODE): Walk while entering, Idle
+  // otherwise. Skipped entirely when a poseRef is supplied so the legacy
+  // flag and the scroll-driven pose mode can never fight over the mixer.
   useEffect(() => {
-    if (!actions) return undefined
+    if (!actions || poseRef) return undefined
     const anim = CHARACTER_ANIMATION
     const walkKey = findKey(names, CHARACTER_CLIPS.walk)
     const idleKey = findKey(names, CHARACTER_CLIPS.idle)
@@ -102,7 +120,7 @@ export function useCharacterController({ active, reducedMotion, onClips }) {
       walk.fadeOut(anim.exitFade)
       idle.fadeOut(anim.exitFade)
     }
-  }, [actions, names, active, reducedMotion])
+  }, [actions, names, active, reducedMotion, poseRef])
 
   // Manual clip access for future (non-Hero) use — e.g. a Wave greeting.
   // Still routed through the config mapping; callers use logical names.
@@ -120,8 +138,39 @@ export function useCharacterController({ active, reducedMotion, onClips }) {
     [actions, names]
   )
 
-  // Stop mixer actions on unmount; GLTF cache disposal stays with R3F/drei
-  // defaults (single shared instance, no clones).
+  // ── SECTION MODE (scroll-driven poseRef) ──────────────────────────────
+  // Change-only crossfade: poseRef is written by section choreography every
+  // scroll frame, but a clip is restarted ONLY when the logical pose value
+  // actually differs from lastPose. `applyPose` resolves logical → actual
+  // clip names through characterConfig.js (replacement-rig safe).
+  const lastPose = useRef(null)
+  const applyPose = useCallback(
+    (logicalName) => {
+      if (!actions) return
+      if (lastPose.current === logicalName) return // no restarts, ever
+      lastPose.current = logicalName
+      const wanted = CHARACTER_CLIPS[logicalName] ?? logicalName
+      const key = findKey(names, wanted)
+      const next = key ? actions[key] : null
+      if (!next) return // clip missing on a future rig: hold current pose
+      const fadeIn = CHARACTER_ANIMATION[`${logicalName}FadeIn`] ?? CHARACTER_ANIMATION.defaultFadeIn
+      const fadeOut = CHARACTER_ANIMATION[`${logicalName}FadeOut`] ?? CHARACTER_ANIMATION.defaultFadeOut
+      Object.entries(actions).forEach(([k, a]) => {
+        if (k !== key) a.fadeOut(fadeOut)
+      })
+      next.reset().fadeIn(fadeIn).play()
+    },
+    [actions, names]
+  )
+
+  useFrame(() => {
+    if (!poseRef) return // Hero/legacy mode: the effect above owns the mixer
+    applyPose(poseRef.current || CHARACTER_CLIPS.idle && 'idle' || 'idle')
+  })
+
+  // Stop mixer actions on unmount; the ORIGINAL cached GLTF scene stays with
+  // R3F/drei defaults (shared across canvases); each canvas's skeleton clone
+  // is released with its own group subtree.
   useEffect(
     () => () => {
       try {
@@ -133,7 +182,7 @@ export function useCharacterController({ active, reducedMotion, onClips }) {
     [mixer]
   )
 
-  return { group, scene, names, actions, scale, lift, playClip }
+  return { group, scene: instance, names, actions, scale, lift, playClip }
 }
 
 useGLTF.preload(CHARACTER_ASSET.url)
