@@ -1,0 +1,126 @@
+/*
+ * Feedback styles — clean vertical form with restrained borders.
+ */
+.feedback__header {
+  text-align: center;
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+.feedback__title {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.feedback__subtitle {
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
+
+.feedback__form {
+  margin-top: var(--space-2xl);
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.feedback__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.feedback__field label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.feedback__field legend {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  padding: 0;
+}
+
+.feedback__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.feedback__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.feedback__option input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-accent-primary);
+  cursor: pointer;
+}
+
+.feedback__option-label {
+  cursor: pointer;
+}
+
+.feedback__field input,
+.feedback__field textarea {
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-base), background-color var(--transition-base);
+}
+
+.feedback__field input:focus-visible,
+.feedback__field textarea:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+  border-color: var(--color-accent-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.feedback__field input::placeholder,
+.feedback__field textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.feedback__submit {
+  justify-self: start;
+}
+
+.feedback__submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.feedback__error {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-primary);
+}
+
+.feedback__note {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 47.9rem) {
+  .feedback__header {
+    text-align: left;
+  }
+}

@@ -1,0 +1,139 @@
+/*
+ * Base layer — reset, box model, typography defaults, and the cinematic
+ * background. No component styles live here; this only primes the canvas.
+ */
+
+/* ─── Modern CSS reset (scoped to the app root) ─────────────────── */
+:root,
+:root *,
+:root *::before,
+:root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Native smooth anchor scrolling only; respects reduced motion below. */
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Remove default body spacing; lock to the cinematic dark background. */
+html,
+:root {
+  font-size: 100%; /* 16px reference for rem-based tokens. */
+}
+
+body {
+  min-height: 100dvh;
+  background: radial-gradient(ellipse at center, var(--color-surface), var(--color-bg));
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide the native scrollbar for a cinematic feel, keep full scrollability. */
+::-webkit-scrollbar {
+  display: none;
+}
+html {
+  -ms-overflow-style: none;
+}
+html::-ms-outer-sliding-box {
+  overflow-y: visible;
+}
+
+/* ─── Root sizing helpers ───────────────────────────────────────── */
+:root {
+  /* Expose the viewport inline size so JS/3D scenes can read a stable value. */
+  --viewport-width: 100vw;
+  --viewport-height: 100dvh;
+}
+
+/* ─── Selection accent (restrained fuchsia) ─────────────────────── */
+::selection {
+  background: rgba(233, 48, 124, 0.28);
+  color: var(--color-text-primary);
+}
+
+/* ─── Heading defaults (cinematic serif for display) ────────────── */
+h1, .h1, h2, .h2, h3, .h3 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+
+/* Paragraphs keep the body font. */
+p {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-loose);
+  color: var(--color-text-primary);
+}
+
+/* Inherit font for controls so they don't fall back to system fonts. */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove default list styling for custom lists. */
+ul, ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Focus management (keyboard accessible, visible) ───────────── */
+:root {
+  --focus-ring: 2px solid var(--color-accent-cool);
+}
+
+/* Only show strong focus rings for keyboard users, keep them visible. */
+*:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* Buttons must never look like default browser buttons. */
+button,
+.button,
+.btn {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* Respect reduced motion globally for any animated utility. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

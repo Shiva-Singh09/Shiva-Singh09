@@ -1,0 +1,163 @@
+/*
+ * Navbar — sticky, minimal, compatible with the cinematic Hero.
+ * Phase 2: hidden (visibility + slide) during the strongest intro beats via
+ * .navbar--intro; .navbar--visible restores it after handover. Phase 1
+ * always-on behaviour is the default (no class = visible).
+ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 5, 7, 0.8),
+    rgba(11, 11, 16, 0.7)
+  );
+  transition: opacity var(--transition-slow), transform var(--transition-slow), visibility var(--transition-slow);
+}
+
+.navbar--visible {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* Minimal/hidden during the strongest intro sequence. Visibility (not
+   display) keeps sticky layout + keyboard flow intact. */
+.navbar--intro {
+  opacity: 0;
+  transform: translateY(-100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--space-2xl);
+}
+
+.navbar__brand {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.navbar__desktop {
+  display: none;
+}
+
+.navbar__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.navbar__link {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+.navbar__link:hover,
+.navbar__link:focus-visible {
+  color: var(--color-text-primary);
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+.navbar__link--desktop:hover {
+  background: rgba(233, 48, 124, 0.08);
+  color: var(--color-accent-primary);
+}
+
+.navbar__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+.navbar__toggle:hover,
+.navbar__toggle:focus-visible {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ─── Desktop layout ────────────────────────────────────────────── */
+@media (min-width: 48rem) {
+  .navbar__desktop {
+    display: block;
+  }
+  .navbar__toggle {
+    display: none;
+  }
+  .navbar__list--mobile {
+    display: none;
+  }
+}
+
+/* ─── Mobile panel ──────────────────────────────────────────────── */
+.navbar__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(28rem, 80vw);
+  max-width: 28rem;
+  padding: var(--space-section);
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+  transform: translateX(100%);
+  transition: transform var(--transition-slow);
+  z-index: var(--z-navbar);
+  backdrop-filter: blur(12px);
+}
+
+.navbar__panel--open {
+  transform: translateX(0);
+}
+
+/* When the panel is open on mobile, dim the world behind it. */
+.navbar__panel--open::backdrop {
+  /* handled via overlay; kept simple */
+}
+
+/* Reduce motion: snap instead of slide. */
+@media (prefers-reduced-motion: reduce) {
+  .navbar__panel {
+    transition: none;
+  }
+  .navbar,
+  .navbar--intro,
+  .navbar--visible {
+    transition: none;
+  }
+}
+
+/* Ensure panel content is never narrower than readable. */
+.navbar__list--mobile {
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* Prevent mobile layout bleed on very small screens. */
+@media (max-width: 47.9rem) {
+  html {
+    overflow-x: hidden;
+  }
+}

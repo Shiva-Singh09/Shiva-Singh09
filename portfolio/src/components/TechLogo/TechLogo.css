@@ -1,0 +1,14 @@
+/* Tech logo sizing — inherits surrounding text color. */
+.tech-logo {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 1.05em;
+  height: 1.05em;
+  color: var(--color-accent-primary);
+}
+
+.tech-logo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

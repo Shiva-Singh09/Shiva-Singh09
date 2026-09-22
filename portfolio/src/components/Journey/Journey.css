@@ -1,0 +1,137 @@
+/*
+ * Journey styles — clean two-column timeline (desktop) stacking on mobile.
+ * Restrained border, no neon, no fake graph.
+ */
+.journey__timeline {
+  position: relative;
+  margin-top: var(--space-xl);
+  list-style: none;
+}
+
+.journey__timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.journey__milestone {
+  position: relative;
+  padding-left: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  opacity: 0.35;
+  transition: opacity var(--transition-slow);
+}
+
+.journey__milestone.is-visible {
+  opacity: 1;
+}
+
+.journey__milestone--current::before {
+  border-color: var(--color-accent-primary);
+  background: var(--color-accent-primary);
+}
+
+.journey__current-tag {
+  display: inline-block;
+  margin-left: var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent-primary);
+  border: 1px solid var(--color-accent-primary);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--space-sm);
+  vertical-align: middle;
+}
+
+.journey__bridge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+}
+
+.journey__bridge-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-border), var(--color-accent-primary), transparent);
+}
+
+.journey__bridge-label {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey__milestone {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+.journey__milestone:last-child {
+  margin-bottom: 0;
+}
+
+.journey__milestone::before {
+  content: '';
+  position: absolute;
+  top: 0.15rem;
+  left: -0.35rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+}
+
+.journey__year {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-primary);
+}
+
+.journey__items {
+  margin-top: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  list-style: none;
+}
+
+.journey__item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-md);
+  align-items: baseline;
+}
+
+.journey__item-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.journey__item-subtitle {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 47.9rem) {
+  .journey__timeline::before {
+    left: -0.5rem;
+  }
+  .journey__milestone {
+    padding-left: var(--space-lg);
+  }
+  .journey__year {
+    font-size: var(--font-size-sm);
+  }
+}

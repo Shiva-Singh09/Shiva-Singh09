@@ -1,0 +1,135 @@
+/*
+ * About styles — left content column (character owns right via Hero;
+ * About keeps calm cinematic continuation with no overlay battles).
+ */
+.about__grid {
+  display: block;
+}
+
+.about__main {
+  max-width: 44rem;
+}
+
+.about__content {
+  margin-top: var(--space-xl);
+  max-width: 42rem;
+}
+
+.about__lead {
+  margin-bottom: var(--space-lg);
+}
+
+.about__greeting {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.about__role {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.about__bio {
+  margin-bottom: var(--space-xl);
+  color: var(--color-text-primary);
+}
+
+.about__pillars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+  list-style: none;
+}
+
+.about__pillars li {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2xs) var(--space-md);
+}
+
+.about__audio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.about__audio-note {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.about__tech {
+  display: grid;
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.about__tech-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.about__tech-title {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-text-secondary);
+}
+
+.about__tech-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-sm);
+}
+
+.about__tech-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2xs) var(--space-sm);
+}
+
+.about__closing {
+  margin-top: var(--space-2xl);
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--color-accent-primary);
+}
+
+.about__closing p {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 47.9rem) {
+  .about__content {
+    margin-top: var(--space-lg);
+  }
+}

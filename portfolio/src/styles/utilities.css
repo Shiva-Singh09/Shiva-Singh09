@@ -1,0 +1,147 @@
+/*
+ * Global utilities — reusable, token-driven helpers used across components.
+ */
+
+/* ─── Layout container ──────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--layout-gutter);
+}
+.container--wide {
+  max-width: var(--layout-max-width-wide);
+}
+
+/* ─── Section primitive ──────────────────────────────────────────── */
+.section {
+  position: relative;
+  width: 100%;
+  padding-block: var(--space-section);
+}
+.section--dense {
+  padding-block: var(--space-section-dense);
+}
+
+/* ─── Section numbering / titles (cinematic hierarchy) ──────────── */
+.section-number {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-text-secondary);
+  opacity: 0.9;
+}
+.section-title {
+  margin-top: var(--space-sm);
+  font-family: var(--font-display);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+.section-title__number {
+  color: var(--color-accent-primary);
+}
+
+/* ─── Buttons (clean, never default browser style) ──────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-base), border-color var(--transition-base), opacity var(--transition-fast);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn--primary {
+  background: var(--color-accent-primary);
+  color: var(--color-text-primary);
+}
+.btn--primary:hover {
+  background: #d42570;
+}
+.btn--primary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+.btn--secondary {
+  background: transparent;
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+.btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
+}
+.btn--secondary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--color-accent-secondary);
+  border-color: transparent;
+}
+.btn--ghost:hover {
+  color: var(--color-text-primary);
+}
+
+/* ─── Accessibility helpers ─────────────────────────────────────── */
+.visually-hidden,
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 2px, 1px) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ─── Text helpers ──────────────────────────────────────────────── */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-accent { color: var(--color-accent-primary); }
+
+.font-display { font-family: var(--font-display); }
+.font-body { font-family: var(--font-body); }
+
+/* Uppercase tracking used for nav + labels. */
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Border accent strip (for sections / cards) ────────────────── */
+.border-accent-top {
+  position: relative;
+}
+.border-accent-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90, var(--color-accent-primary), transparent);
+  opacity: 0.6;
+}
+
+/* ─── Responsive visibility ───────────────────────────────────────── */
+.hide-mobile { display: none; }
+.show-mobile { display: block; }
+
+@media (min-width: 48rem) {
+  .hide-mobile { display: block; }
+  .show-mobile { display: none; }
+}

@@ -1,0 +1,29 @@
+/*
+ * Global stylesheet entry point.
+ * Imported once from src/main.jsx. Do NOT place component styles here —
+ * keep them co-located with their component for a scalable architecture.
+ */
+
+@import './tokens.css';
+@import './base.css';
+@import './utilities.css';
+@import './reveal.css';
+@import '../components/TechLogo/TechLogo.css';
+
+/*
+ * Root layout: ensure the app fills the viewport and sections stack
+ * vertically with consistent block flow.
+ */
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cinematic page background — subtle layered gradient, kept dark. */
+html {
+  background:
+    radial-gradient(ellipse at top, rgba(124, 92, 255, 0.06), transparent 45%),
+    radial-gradient(ellipse at bottom, rgba(77, 163, 255, 0.05), transparent 45%),
+    var(--color-bg);
+}

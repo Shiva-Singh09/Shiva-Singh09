@@ -1,0 +1,34 @@
+{
+  "name": "portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cinematic personal portfolio for Shiva Singh — Full-Stack Developer | AI Engineer.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "portfolio",
+    "react",
+    "vite",
+    "threejs",
+    "r3f",
+    "gsap"
+  ],
+  "author": "Shiva Singh",
+  "license": "MIT",
+  "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "gsap": "^3.15.0",
+    "react": "~19.2.8",
+    "react-dom": "~19.2.8",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.0"
+  }
+}

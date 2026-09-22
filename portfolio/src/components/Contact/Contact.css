@@ -1,0 +1,110 @@
+/*
+ * Contact styles — vertical list of contact methods with icon + value.
+ * The pending (LinkedIn) entry is visually muted and non-interactive.
+ */
+.contact__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-width: 42rem;
+  margin-top: var(--space-xl);
+}
+
+.contact__scene {
+  position: relative;
+  width: 100%;
+  height: clamp(20rem, 48vw, 30rem);
+  margin-top: var(--space-xl);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.contact__scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.contact__veil,
+.contact__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.contact__caption {
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.contact__item {
+  list-style: none;
+}
+
+.contact__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.contact__link:hover {
+  background: rgba(233, 48, 124, 0.06);
+  border-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
+}
+
+.contact__link:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.contact__icon {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-accent-primary);
+}
+
+.contact__label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.contact__value {
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.contact__link--pending {
+  cursor: default;
+  opacity: 0.55;
+  border-color: var(--color-border);
+}
+
+@media (min-width: 48rem) {
+  .contact__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .contact__item {
+    flex: 1 1 200px;
+  }
+}

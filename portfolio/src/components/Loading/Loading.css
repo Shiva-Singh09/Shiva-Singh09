@@ -1,0 +1,86 @@
+/*
+ * Loading styles — fullscreen cinematic gate.
+ * The brand tag (fuchsia) is revealed after a short delay so the intro feels
+ * intentional; all motion is disabled for reduced-motion users (handled in JS).
+ */
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  opacity: 1;
+  transition: opacity var(--transition-slow);
+  pointer-events: none;
+}
+
+.loading--hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(var(--space-sm));
+  transition:
+    opacity var(--transition-slow),
+    transform var(--transition-slow);
+}
+
+/* Staggered reveal via animation; zero cost under prefers-reduced-motion
+   because base.css disables animation timing globally in that case. */
+@media (prefers-reduced-motion: no-preference) {
+  .loading__content {
+    animation: loadingReveal var(--transition-slow) ease-out 0.1s both;
+  }
+  .loading__title {
+    letter-spacing: 0.2em;
+  }
+  .loading__status {
+    opacity: 0.7;
+    animation: fadeInGlow 1.6s ease-in-out 0.3s both;
+  }
+  .loading__tag {
+    opacity: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    animation: fadeIn 0.4s ease-out 0.8s both;
+  }
+}
+
+.loading__title {
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.loading__status {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-text-secondary);
+}
+
+@keyframes loadingReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInGlow {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}

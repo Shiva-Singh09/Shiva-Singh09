@@ -1,0 +1,99 @@
+/*
+ * Design Tokens — the permanent visual source of truth.
+ * All values mirror DESIGN.md. Components and utilities reference these
+ * variables so the theme can be tuned from a single place.
+ */
+
+:root {
+  /* ─── Color system ──────────────────────────────────────────────
+   * Cinematic Dark × Futuristic Professional
+   * Fuchsia = primary brand accent
+   * Violet/blue = controlled atmosphere + 3D lighting
+   * White = primary information ; Gray = supporting information
+   * The page is NOT turned fully pink/purple. */
+  --color-bg: #050507;
+  --color-surface: #0b0b10;
+  --color-accent-primary: #e9307c;   /* fuchsia  — primary brand accent */
+  --color-accent-secondary: #7c5cff; /* violet   — atmospheric / lighting */
+  --color-accent-cool: #4da3ff;      /* blue     — highlights / focus ring */
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #a1a1aa;
+  --color-border: rgba(255, 255, 255, 0.10);
+
+  /* Subtle cinematic gradients (controlled, never dominant). */
+  --gradient-overlay: radial-gradient(ellipse at center, rgba(11, 11, 16, 0.75), transparent 60%);
+  --gradient-fuchsia: linear-gradient(135deg, rgba(233, 48, 124, 0.12), transparent 60%);
+
+  /* ─── Typography ────────────────────────────────────────────────
+   * Display / cinematic headings: DM Serif Display
+   * Body / UI / navigation: Manrope
+   * Weights are restrained — no giant headings everywhere. */
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Fluid scale via clamp() so hierarchy holds on every viewport. */
+  --font-size-xs: clamp(0.7rem, 1.6vw, 0.85rem);        /* caption / numbers */
+  --font-size-sm: clamp(0.8rem, 1.8vw, 0.95rem);        /* small UI */
+  --font-size-base: clamp(0.92rem, 2.2vw, 1.06rem);     /* body copy */
+  --font-size-lg: clamp(1.05rem, 2.6vw, 1.2rem);        /* lead text */
+
+  --font-size-display: clamp(2.4rem, 6vw, 4.6rem);      /* Hero / major headings */
+  --font-size-h1: clamp(2rem, 4.2vw, 3.2rem);
+  --font-size-h2: clamp(1.65rem, 3.4vw, 2.6rem);
+  --font-size-h3: clamp(1.25rem, 2.8vw, 1.75rem);
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.6;
+  --line-height-loose: 1.75;
+
+  /* ─── Spacing (8-point system) ────────────────────────────────── */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 8rem;
+
+  /* Section rhythm — fluid, never cramped. */
+  --space-section: clamp(3rem, 9vw, 6rem);
+  --space-section-dense: clamp(2rem, 6vw, 3.5rem);
+
+  /* ─── Layout ──────────────────────────────────────────────────── */
+  --layout-max-width: 68rem;           /* ~1088px content measure */
+  --layout-max-width-wide: 1200px;     /* hard cap for very wide screens */
+  --layout-gutter: clamp(1rem, 4vw, 1.5rem);
+
+  /* ─── Border radius (restrained) ──────────────────────────────── */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.4rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-pill: 9999px;
+
+  /* ─── Transitions (motion is intentional, disabled for reduced motion) ─ */
+  --transition-fast: 120ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* ─── Z-index layers ──────────────────────────────────────────── */
+  --z-base: 0;
+  --z-scene-canvas: 5;
+  --z-scene-content: 10;
+  --z-navbar: 1000;
+  --z-loading: 2000;
+  --z-modal: 3000;
+
+  /* ─── Misc ─────────────────────────────────────────────────────── */
+  --focus-outline: 2px solid var(--color-accent-cool);
+  --focus-offset: 2px;
+}
