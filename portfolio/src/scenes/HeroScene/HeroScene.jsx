@@ -33,6 +33,10 @@ export default function HeroScene({ scrollRef }) {
   const [webglChecked, setWebglChecked] = useState(false)
   const [canvasFailed, setCanvasFailed] = useState(false)
   const prevPhase = useRef(heroPhase)
+  // The stage layer (see Hero.css): the Hero canvas is a fixed full-viewport
+  // layer so the character stays present while About scrolls past him. The
+  // About choreography fades / retires it once the shot is over.
+  const stageRef = useRef(null)
 
   // Shared mutable choreography object: written by the single GSAP timeline
   // in HeroExperience, read per-frame by rig/character/lighting.
@@ -55,13 +59,23 @@ export default function HeroScene({ scrollRef }) {
   // Final framing offset (metres): negative lookX shifts the camera focus
   // left, rendering the settled character right-of-center beside the left
   // text column. Disabled on small screens so nothing clips or overlaps.
+  // `view` is the same breakpoint decision, shared with the About
+  // choreography (framing tables per viewport class).
   const [lookX, setLookX] = useState(0)
+  const [view, setView] = useState('desktop')
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth || 1280
-      if (w < 768) setLookX(HERO_LAYOUT.lookXMobile)
-      else if (w < 1100) setLookX(HERO_LAYOUT.lookXTablet)
-      else setLookX(HERO_LAYOUT.lookX)
+      if (w < 768) {
+        setLookX(HERO_LAYOUT.lookXMobile)
+        setView('mobile')
+      } else if (w < 1100) {
+        setLookX(HERO_LAYOUT.lookXTablet)
+        setView('tablet')
+      } else {
+        setLookX(HERO_LAYOUT.lookX)
+        setView('desktop')
+      }
     }
     update()
     window.addEventListener('resize', update)
@@ -112,6 +126,7 @@ export default function HeroScene({ scrollRef }) {
 
   return (
     <div
+      ref={stageRef}
       className="hero__scene"
       data-scene="hero"
       data-webgl={String(webgl)}
@@ -131,6 +146,8 @@ export default function HeroScene({ scrollRef }) {
             reducedMotion={reducedMotion}
             phase={heroPhase}
             lookX={lookX}
+            view={view}
+            stageRef={stageRef}
             onPhase={handlePhase}
             onClips={handleClips}
             onReady={handleReady}

@@ -41,6 +41,8 @@ export default function HeroCanvas({
   reducedMotion,
   phase,
   lookX,
+  view,
+  stageRef,
   onPhase,
   onClips,
   onReady,
@@ -66,6 +68,8 @@ export default function HeroCanvas({
           reducedMotion={reducedMotion}
           phase={phase}
           lookX={lookX}
+          view={view}
+          stageRef={stageRef}
           onPhase={onPhase}
           onClips={onClips}
           onReady={onReady}

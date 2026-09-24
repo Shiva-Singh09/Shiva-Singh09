@@ -26,16 +26,26 @@
   z-index: var(--z-base);
 }
 
-/* The scene is an absolute full-viewport LAYER behind the content — never a
-   flex/grid sibling of the text column. inset:0 + 100%/100% fills the Hero
-   box exactly (== 100vw × 100dvh) without the 100vw scrollbar over-size. */
+/* The scene is the cinematic STAGE: a fixed full-viewport layer behind the
+   content, so the environment stays visually continuous from the Hero shot
+   through the About shot (the character keeps walking beside the copy) and can
+   never be hard-cut by section boundaries. `inset:0` fills the viewport exactly
+   (no 100vw scrollbar over-size). The About choreography fades the layer and
+   retires it with `is-dormant` once the shot has handed over to Skills, so it
+   never sits over later sections. */
 .hero__scene {
-  position: absolute;
+  position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
   z-index: var(--z-scene-canvas);
   overflow: hidden;
+}
+
+/* Retired stage: nothing paints, nothing composites (reversible — scrolling
+   back into the Hero/About range restores it). */
+.hero__scene.is-dormant {
+  visibility: hidden;
 }
 
 .hero__scene canvas {

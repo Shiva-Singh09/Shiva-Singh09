@@ -1,9 +1,16 @@
 /*
- * About styles — left content column (character owns right via Hero;
- * About keeps calm cinematic continuation with no overlay battles).
+ * About styles — left content column (the character owns the right side of the
+ * fixed Hero stage; About keeps the calm cinematic continuation with no overlay
+ * battles). The character and this copy are driven by the SAME scroll range —
+ * see scenes/HeroScene/aboutChoreography.js.
  */
 .about__grid {
   display: block;
+  /* The Hero canvas is a fixed stage behind the page (Hero.css → .hero__scene).
+     Lifting the About column above that scene layer keeps every word readable
+     and clickable while the character is framed beside the copy. */
+  position: relative;
+  z-index: var(--z-scene-content);
 }
 
 .about__main {
@@ -131,5 +138,57 @@
 @media (max-width: 47.9rem) {
   .about__content {
     margin-top: var(--space-lg);
+  }
+}
+
+/* ── About → Skills bridge ───────────────────────────────────────────────
+   The tail of the section. It gives the exit beat its scroll room — the
+   character finishes his turn + walk toward the Cyber-Box stage while this
+   passes — and hands the story over with the same restrained line language the
+   Journey bridge uses. Decorative only (aria-hidden in the markup). */
+.about__bridge {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-3xl);
+  min-height: clamp(9rem, 42vh, 20rem);
+}
+
+.about__bridge-line {
+  display: block;
+  width: min(22rem, 60%);
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-accent-primary), var(--color-border), transparent);
+}
+
+.about__bridge-label {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ── Small screens: legibility veil ──────────────────────────────────────
+   Below 1100px the copy column spans nearly the full viewport, so the character
+   is framed lower / further back (aboutChoreography.js → tablet + mobile) and
+   this scrim sits between the scene layer and the text (z 6 between scene 5 and
+   content 10): the character stays present without ever fighting the copy.
+   Over the already-dark background it is effectively invisible when the stage
+   is retired or unavailable. */
+@media (max-width: 68.75rem) {
+  .about::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(5, 5, 7, 0.9) 0%,
+      rgba(5, 5, 7, 0.84) 46%,
+      rgba(5, 5, 7, 0.55) 68%,
+      rgba(5, 5, 7, 0.18) 86%,
+      rgba(5, 5, 7, 0) 100%
+    );
   }
 }

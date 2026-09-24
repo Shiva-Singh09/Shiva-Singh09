@@ -45,7 +45,7 @@ const findKey = (names, wanted) => {
   return names.find((n) => n.toLowerCase() === String(wanted).toLowerCase()) ?? null
 }
 
-export function useCharacterController({ active, poseRef, reducedMotion, onClips }) {
+export function useCharacterController({ active, poseRef, reducedMotion, onClips, renderPriority = 0 }) {
   const group = useRef(null)
   const reported = useRef(false)
   const { scene, animations } = useGLTF(CHARACTER_ASSET.url)
@@ -166,7 +166,7 @@ export function useCharacterController({ active, poseRef, reducedMotion, onClips
   useFrame(() => {
     if (!poseRef) return // Hero/legacy mode: the effect above owns the mixer
     applyPose(poseRef.current || CHARACTER_CLIPS.idle && 'idle' || 'idle')
-  })
+  }, renderPriority)
 
   // Stop mixer actions on unmount; the ORIGINAL cached GLTF scene stays with
   // R3F/drei defaults (shared across canvases); each canvas's skeleton clone

@@ -24,7 +24,7 @@ import HeroFloor from './HeroFloor.jsx'
 import HeroEnvironment from './HeroEnvironment.jsx'
 import HeroCameraRig from './HeroCameraRig.jsx'
 import { HERO_CAMERA, HERO_LAYOUT, resolveHeroTiming } from './heroChoreography.js'
-import { ABOUT_LAYOUT, ABOUT_CAMERA, ABOUT_SCROLL, resolveAboutProgress } from './aboutChoreography.js'
+import { ABOUT_SCROLL, createAboutTimeline } from './aboutChoreography.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -37,6 +37,8 @@ export default function HeroExperience({
   onClips,
   onReady,
   lookX = 0,
+  view = 'desktop',
+  stageRef = null,
 }) {
   const phaseRef = useRef(phase)
   phaseRef.current = phase
@@ -44,6 +46,8 @@ export default function HeroExperience({
   callbacks.current = { onPhase, onClips, onReady }
   const lookXRef = useRef(lookX)
   lookXRef.current = lookX
+  const viewRef = useRef(view)
+  viewRef.current = view
   const started = useRef(false)
 
   // The single cinematic timeline. Built once the GLB + first frame exist
@@ -174,43 +178,72 @@ export default function HeroExperience({
     // behind a loader — "Entering workspace…" is the Suspense fallback only.
     callbacks.current.onReady?.()
 
-    // ── About scroll choreography ───────────────────────────────────────
-    // Scroll-driven continuation: the character walks further RIGHT while the
-    // About section reveals on the LEFT. Fires after the hero cinematic ends.
-    // Writes into the SAME shared choreo object so the character/camera/lighting
-    // stay in sync — no competing animation system.
-    const aboutTrigger = ScrollTrigger.create({
-      trigger: '#about',
-      start: ABOUT_SCROLL.start,
-      end: ABOUT_SCROLL.end,
-      scrub: ABOUT_SCROLL.scrub,
-      onUpdate: (self) => {
-        const p = resolveAboutProgress(self.progress)
-        // Character walks toward the right edge (+X). Yaw stays facing front
-        // (no Run clip exists — we never reference it).
-        c.x = ABOUT_LAYOUT.restX + p.exitT * (ABOUT_LAYOUT.exitX - ABOUT_LAYOUT.restX)
-        c.yaw = ABOUT_LAYOUT.exitYaw
-        // Camera lookX drifts right to keep both character and About content
-        // in frame. Orbit math untouched; this is purely the focus offset.
-        const baseLookX = lookXRef.current || 0
-        c.lookX = baseLookX + p.exitT * (ABOUT_CAMERA.lookXEnd - baseLookX)
-        // Camera height stays in the settled front framing.
-        c.radius = ABOUT_CAMERA.radius
-        c.height = ABOUT_CAMERA.height
-        c.lookY = ABOUT_CAMERA.lookY
-      },
-      // No explicit onComplete: scrub keeps the character parked at the end
-      // value until Hero unmounts (scroll back reverses it naturally).
-    })
-
     return () => {
       tl.kill()
-      aboutTrigger.kill()
     }
     // Intentionally once: the timeline owns the whole intro. Tier changes
     // after start would fight the running timeline, so they apply on reload.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // ── About scroll choreography ─────────────────────────────────────────
+  // Created once the Hero cinematic has handed over (complete / fallback), so
+  // the timer-driven intro and the scroll-driven About shot can never fight over
+  // the camera. ONE scrubbed timeline owns the whole shot — the camera leaving
+  // the Hero framing, the character walking in and settling to Idle, the
+  // technology-reveal orientation beats, then the turn + walk toward Skills
+  // while the stage dissolves (see aboutChoreography.js). Scroll position is the
+  // source of truth, so scrolling up reverses every state; the fixed stage layer
+  // is retired while later sections are on screen.
+  useEffect(() => {
+    if (phase !== 'complete' && phase !== 'fallback') return undefined
+    const stageEl = stageRef?.current ?? null
+    let dormantNow = null
+    const setDormant = (dormant) => {
+      if (!stageEl || dormantNow === dormant) return
+      dormantNow = dormant
+      stageEl.classList.toggle('is-dormant', dormant)
+    }
+
+    if (reducedMotion) {
+      // Reduced motion: no walking / camera choreography at all — the stage
+      // simply retires once About is being read, so the copy owns the viewport.
+      const rm = ScrollTrigger.create({
+        trigger: ABOUT_SCROLL.trigger,
+        start: ABOUT_SCROLL.rmStart,
+        end: ABOUT_SCROLL.end,
+        onUpdate: (self) => setDormant(self.progress > 0),
+      })
+      setDormant(rm.progress > 0)
+      return () => rm.kill()
+    }
+
+    const tl = createAboutTimeline({
+      target: choreo.current,
+      stage: stageEl,
+      view: viewRef.current,
+      lookX: lookXRef.current || 0,
+    })
+    const trigger = ScrollTrigger.create({
+      trigger: ABOUT_SCROLL.trigger,
+      start: ABOUT_SCROLL.start,
+      end: ABOUT_SCROLL.end,
+      scrub: ABOUT_SCROLL.scrub,
+      animation: tl,
+      onUpdate: (self) => setDormant(self.progress >= ABOUT_SCROLL.dormantAt),
+    })
+    // ScrollTrigger may already be past its start (reload mid-page): sync once.
+    setDormant(trigger.progress >= ABOUT_SCROLL.dormantAt)
+
+    return () => {
+      trigger.kill()
+      tl.kill()
+      if (stageEl) {
+        stageEl.classList.remove('is-dormant')
+        stageEl.style.opacity = ''
+      }
+    }
+  }, [phase, reducedMotion, choreo, view, stageRef])
 
   return (
     <group>
