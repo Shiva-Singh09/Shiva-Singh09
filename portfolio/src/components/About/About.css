@@ -182,13 +182,17 @@
     inset: 0;
     z-index: 6;
     pointer-events: none;
+    /* Legibility veil for the COPY band only (left side): on small screens the
+       column spans most of the width, so the veil used to cover the whole
+       section and swallowed the 3D character (z 6 > scene z 5) - he faded to a
+       ghost while scrolling through About. A horizontal veil keeps the text
+       readable and leaves the band where he stands (lower right) clear. */
     background: linear-gradient(
-      180deg,
-      rgba(5, 5, 7, 0.9) 0%,
-      rgba(5, 5, 7, 0.84) 46%,
-      rgba(5, 5, 7, 0.55) 68%,
-      rgba(5, 5, 7, 0.18) 86%,
-      rgba(5, 5, 7, 0) 100%
+      90deg,
+      rgba(5, 5, 7, 0.92) 0%,
+      rgba(5, 5, 7, 0.86) 42%,
+      rgba(5, 5, 7, 0.42) 62%,
+      rgba(5, 5, 7, 0) 80%
     );
   }
 }

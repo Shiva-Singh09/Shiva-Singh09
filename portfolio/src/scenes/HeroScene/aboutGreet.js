@@ -29,10 +29,11 @@ export const ABOUT_GREET_POSE = {
   },
   // Respectful bow: small forward pitch (radians, about X) on the spine chain.
   bow: 0.1,
-  // Greeting window inside the About progress range: the gesture completes as
-  // the camera settles, holds through the beat reveals, releases pre-exit.
-  at: 0.06,
-  settle: 0.2,
+  // The fold starts only AFTER the camera push stops (settleAt 0.2) - the
+  // spec's order: reach the framing, then greet; holds through the intro /
+  // technology reveals, releases just before the turn toward Skills.
+  at: 0.2,
+  settle: 0.3,
   holdUntil: 0.56,
   releaseAt: 0.6,
 }
@@ -44,8 +45,12 @@ export const ABOUT_CAMERA_PUSH = {
   // ~1.9 m character without cropping face/body awkwardly. Same push on all
   // viewport classes; the base framing already differs per class.
   radiusIn: 1.1,
-  // The push window mirrors the greeting window: complete as the hands meet.
-  at: 0.06,
+  // Starts the moment the Hero-recompose tween (0 -> 0.08) releases the radius
+  // (no overlapping writers on `radius`), stops at 0.2: the camera reaches the
+  // below-waist framing FIRST, then the hands fold (greet.at = 0.2). The
+  // portrait-hold creep later eases the radius back to the approved hold
+  // framing (ends 0.56), before this release window closes at 0.6.
+  at: 0.08,
   settleAt: 0.2,
   releaseAt: 0.6,
 }

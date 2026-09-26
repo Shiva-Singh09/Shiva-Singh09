@@ -48,26 +48,35 @@ export const ABOUT_SCROLL = {
   // Reduced motion: the stage simply retires once About is being read; no
   // walking / camera choreography is created at all.
   rmStart: 'top 60%',
-  // Progress at/after which the stage layer is fully retired (visibility) so
-  // it can never sit over Skills / Projects / Contact.
-  dormantAt: 0.84,
+  // Progress at/after which the stage layer is retired (visibility) so it can
+  // never sit over the Skills / Projects stages once they are the subject. The
+  // About shot ends exactly at 1.0, so the dissolve (0.74 -> 0.94 in the
+  // timeline) and this gate both belong to the hand-over: the character stays
+  // visible for the whole About shot and is received by the Skills stage
+  // (SkillsScene -> SceneCharacter) as the Hero layer dissolves.
+  dormantAt: 0.94,
 }
 
 // ── Content beats (viewport anchors, consumed by About.jsx) ──────────────
 // One scrubbed timeline per beat - never one trigger per element.
 export const ABOUT_TEXT_BEATS = {
   // "01 / ABOUT ME" label + section title - the opening visual focus: enters
-  // from the left together with the camera push-in toward the character, then
-  // the remaining beats reveal only after the greeting gesture settles.
+  // from the left together with the camera push-in toward the character
+  // (progress window approx. 0.08 - 0.21), then the remaining beats reveal
+  // only after the greeting gesture settles (fold 0.2 - 0.3).
   label: { start: 'top 96%', end: 'top 66%', scrub: 0.5 },
-  // "Hi, I'm Shiva Singh." + role
-  lead: { start: 'top 88%', end: 'top 60%', scrub: 0.5 },
-  // introduction (bio block, pillars, voice controls)
-  intro: { start: 'top 88%', end: 'top 55%', scrub: 0.5 },
-  // technology ecosystem: group -> logos, progressively
-  tech: { start: 'top 88%', end: 'top 24%', scrub: 0.6 },
-  // final personal statement (slower, stronger but restrained)
-  closing: { start: 'top 88%', end: 'top 52%', scrub: 0.5 },
+  // "Hi, I'm Shiva Singh." + role - left-entry completes before the fold
+  // (window approx. 0.13 - 0.21).
+  lead: { start: 'top 88%', end: 'top 70%', scrub: 0.5 },
+  // introduction (bio block, pillars, voice controls) - starts only after the
+  // Namaste has settled (window approx. 0.31 - 0.43).
+  intro: { start: 'top 60%', end: 'top 33%', scrub: 0.5 },
+  // technology ecosystem: group -> logos, progressively (window approx.
+  // 0.44 - 0.56, tracked by ABOUT_YAW_BEATS).
+  tech: { start: 'top 51%', end: 'top 24%', scrub: 0.6 },
+  // final personal statement (slower, stronger but restrained); window
+  // approx. 0.50 - 0.58, complete before the hands release and the turn at 0.6.
+  closing: { start: 'top 64%', end: 'top 46%', scrub: 0.5 },
   // About recedes toward the left as the character turns toward Skills
   exit: { start: 'bottom 92%', end: 'bottom 60%', scrub: 0.5 },
 }
@@ -93,6 +102,22 @@ export { ABOUT_GREET_POSE, ABOUT_CAMERA_PUSH }
 //
 // Small screens frame the character lower and pull the camera back so the copy
 // owns the reading band; the stage also softens (stage.settled < 1).
+//
+// FRUSTUM INVARIANT (the bug this table exists around): the character must stay
+// INSIDE the horizontal frame at every beat, on every viewport class -
+// otherwise he is clipped by the right edge and then walks off screen, i.e.
+// "the character disappears when scrolling into About".
+//   |charX - lookX| <= 0.92 * radius * tan(fov/2) * aspect - halfBody
+// with halfBody ~ 0.55 m (the rig's measured world bbox half-width) and
+// aspect >= 1.25 (the narrowest desktop-class window). tan(fov/2) = 0.3443, so
+// the budget is 0.396 * radius - 0.55:
+//   radius 4.40 (hero front) -> 1.19 m     radius 5.00 (settle) -> 1.43 m
+//   radius 3.90 (pushed in)  -> 0.99 m     radius 5.15 (hold)   -> 1.49 m
+//                                          radius 5.60 (exit)   -> 1.67 m
+// Every character position below is paired with the lookX that keeps the
+// offset inside that budget, so the camera pans WITH him instead of leaving him
+// behind the right edge (the old -1.55 / -2.35 focus pushed him out of frame
+// from ~p 0.15 and off screen well before the shot ended).
 export const ABOUT_VIEWS = {
   desktop: {
     camera: {
@@ -100,10 +125,11 @@ export const ABOUT_VIEWS = {
       hold: { radius: 5.15, height: 1.34, lookY: 1.06 },
       exit: { radius: 5.6, height: 1.52, lookY: 1.12 },
     },
-    lookX: { settle: -1.55, hold: -1.62, exit: -2.35 },
-    // How far the frame focus follows the walking character (subtle).
-    lookXFollow: 0.3,
-    character: { aboutX: 0.55, exitX: 1.9 },
+    // Frustum budget at each beat (see the invariant above the table):
+    // settle 1.43 / push 0.99 / hold 1.49 / exit 1.67 m. The offsets used here
+    // are 1.35 / 0.95 / 1.40 / 1.55, so he is never clipped by the right edge.
+    lookX: { settle: -1.05, push: -0.65, hold: -1.1, exit: -0.2 },
+    character: { aboutX: 0.3, exitX: 1.35 },
     // The stage stays fully present for the whole About shot.
     stage: { settled: 1 },
   },
@@ -113,10 +139,12 @@ export const ABOUT_VIEWS = {
       hold: { radius: 5.85, height: 1.46, lookY: 1.9 },
       exit: { radius: 6.2, height: 1.62, lookY: 2.0 },
     },
-    lookX: { settle: -0.4, hold: -0.44, exit: -1.15 },
-    lookXFollow: 0.22,
-    character: { aboutX: 0.4, exitX: 1.5 },
-    stage: { settled: 0.75 },
+    // Same pan as before at settle/hold; the exit keeps a 1.7 m offset so he
+    // stays inside the 6.2 m frame while walking toward the Skills stage.
+    lookX: { settle: -0.4, push: -0.31, hold: -0.44, exit: -0.3 },
+    character: { aboutX: 0.4, exitX: 1.4 },
+    // Small screens keep a legibility veil (About.css) - never a blackout.
+    stage: { settled: 0.85 },
   },
   mobile: {
     camera: {
@@ -125,63 +153,15 @@ export const ABOUT_VIEWS = {
       hold: { radius: 8.65, height: 1.58, lookY: 2.66 },
       exit: { radius: 9.2, height: 1.7, lookY: 2.72 },
     },
-    lookX: { settle: 0, hold: -0.02, exit: -0.75 },
-    lookXFollow: 0.15,
-    character: { aboutX: 0.54, exitX: 1.7 },
-    stage: { settled: 0.6 },
+    // Portrait aspect is the tightest frame (budget 0.79 m at the exit
+    // radius), so the exit pan follows him with a 0.70 m offset.
+    lookX: { settle: 0, push: 0.08, hold: -0.02, exit: 0.85 },
+    character: { aboutX: 0.54, exitX: 1.55 },
+    stage: { settled: 0.8 },
   },
 }
 
-// ── Intro camera push (toward the character) ─────────────────────────────
-export const ABOUT_CAMERA_PUSH = {
-  // Extra radius pull-in (metres) during the intro greeting window - on top
-  // of the settle framing, toward a below-waist / upper-leg framing of the
-  // ~1.9 m character without cropping face/body awkwardly. Same push on all
-  // viewport classes; the base framing already differs per class.
-  radiusIn: 1.1,
-  // The push window mirrors the greeting window: complete as the hands meet.
-  at: 0.06,
-  settleAt: 0.2,
-  releaseAt: 0.6,
-}
-
-// -- Intro greeting pose (Namaste / folded hands) -------------------------------
-// No folded-hands clip exists in the GLB (Idle/Walk/Jump/Wave only - verified
-// from the binary), so the pose is an additive bone overlay applied inside
-// HeroCharacter's own frame loop: the smallest compatible solution on the
-// existing rig. Right-arm local quats were solved offline against the bind
-// translations (palms meet near the chest centre-line, fingers up, elbows
-// down/out); the left arm mirrors the right (negate Y/Z of each local quat -
-// the bind chain is X-mirrored). A slight spine bow completes the respectful
-// reading. The overlay follows the shared choreography's `greet` channel
-// (0 -> 1 -> hold -> release), which the About timeline writes - Hero never sets
-// it, so Hero behavior is untouched, and scroll stays the source of truth
-// (fully reversible). Reduced motion never raises the channel: no gesture.
-// Right-side targets (QUATS_JSON): UA [-0.2282,0.2996,0.3713,0.8487]
-// LA [-0.3255,0.1946,0.1099,0.9188] H [-0.5494,-0.239,0.5064,0.6201]
-const mirrorX = (q) => [q[0], -q[1], -q[2], q[3]]
-const GREET_RIGHT = {
-  upperArm: [-0.2282, 0.2996, 0.3713, 0.8487],
-  lowerArm: [-0.3255, 0.1946, 0.1099, 0.9188],
-  hand: [-0.5494, -0.239, 0.5064, 0.6201],
-}
-export const ABOUT_GREET_POSE = {
-  right: GREET_RIGHT,
-  left: {
-    upperArm: mirrorX(GREET_RIGHT.upperArm),
-    lowerArm: mirrorX(GREET_RIGHT.lowerArm),
-    hand: mirrorX(GREET_RIGHT.hand),
-  },
-  // Respectful bow: small forward pitch (radians, about X) on the spine chain.
-  bow: 0.1,
-  at: 0.06,
-  settle: 0.2,
-  // Greeting window inside the About progress range: the gesture completes as
-  // the camera settles, holds through the beat reveals, releases pre-exit.
-  holdUntil: 0.56,
-  releaseAt: 0.6,
-}
-
+// Greeting pose + camera-push tables live in aboutGreet.js (re-exported above).
 export const resolveAboutView = (view) => ABOUT_VIEWS[view] ?? ABOUT_VIEWS.desktop
 
 // Subtle orientation beats while the technology groups reveal (radians,
@@ -189,9 +169,9 @@ export const resolveAboutView = (view) => ABOUT_VIEWS[view] ?? ABOUT_VIEWS.deskt
 // the character never turns dramatically four times.
 export const ABOUT_YAW_BEATS = [
   { at: 0.3, yaw: -0.14, group: 'FULL-STACK' },
-  { at: 0.38, yaw: -0.22, group: 'AI / ML' },
-  { at: 0.46, yaw: -0.05, group: 'DATABASE' },
-  { at: 0.54, yaw: 0.02, group: 'TOOLS' },
+  { at: 0.47, yaw: -0.22, group: 'AI / ML' },
+  { at: 0.5, yaw: -0.05, group: 'DATABASE' },
+  { at: 0.53, yaw: 0.02, group: 'TOOLS' },
 ]
 
 /**
@@ -243,12 +223,56 @@ export const createAboutTimeline = ({ target, stage = null, view = 'desktop', lo
   //    forced or restarted on a scroll frame.
   tl.fromTo(target, { yaw: faceYaw }, { yaw: walkYaw, duration: 0.04, ease: 'power2.inOut', immediateRender: true }, 0.03)
   tl.fromTo(target, { x: HERO_LAYOUT.restX }, { x: v.character.aboutX, duration: 0.13, immediateRender: true }, 0.06)
-  //    Camera follows the walk subtly - enough to feel alive, never a shake.
+  //    Camera recomposes toward the walking character - the horizontal half of
+  //    the intro push-in (settle -> push focus), so the model lands in the
+  //    right third of the pushed-in frame instead of cropping at the edge.
   tl.fromTo(
     target,
     { lookX: v.lookX.settle },
-    { lookX: v.lookX.settle + v.lookXFollow * v.character.aboutX, duration: 0.13, ease: 'none' },
+    { lookX: v.lookX.push, duration: 0.13, ease: 'none' },
     0.06
+  )
+
+  // 2b) CAMERA PUSH - the opening move: while the label / lead enter from the
+  //    left, the camera draws in and stops at the below-waist framing where
+  //    the greeting reads (radius only; the horizontal pan rides the walk
+  //    tween above, and the settled height / lookY already frame the
+  //    character). Starts at 0.08 so it takes `radius` over exactly when the
+  //    recompose tween above lets go.
+  tl.fromTo(
+    target,
+    { radius: v.camera.settle.radius },
+    {
+      radius: v.camera.settle.radius - ABOUT_CAMERA_PUSH.radiusIn,
+      duration: ABOUT_CAMERA_PUSH.settleAt - ABOUT_CAMERA_PUSH.at,
+      ease: 'power2.inOut',
+    },
+    ABOUT_CAMERA_PUSH.at
+  )
+
+  // 2c) NAMASTE - the fold rises ONLY after the camera has stopped (greet.at =
+  //    push.settleAt), holds through the introduction / technology reveals and
+  //    releases just before the turn toward Skills. Hero never writes `greet`
+  //    (HeroCharacter falls back to 0), so the Hero cinematic is untouched.
+  tl.fromTo(
+    target,
+    { greet: 0 },
+    {
+      greet: 1,
+      duration: ABOUT_GREET_POSE.settle - ABOUT_GREET_POSE.at,
+      ease: 'power2.inOut',
+    },
+    ABOUT_GREET_POSE.at
+  )
+  tl.fromTo(
+    target,
+    { greet: 1 },
+    {
+      greet: 0,
+      duration: ABOUT_GREET_POSE.releaseAt - ABOUT_GREET_POSE.holdUntil,
+      ease: 'power1.inOut',
+    },
+    ABOUT_GREET_POSE.holdUntil
   )
 
   // 3) ARRIVAL - settles to Idle and orients gently toward the viewer/content.
@@ -275,13 +299,19 @@ export const createAboutTimeline = ({ target, stage = null, view = 'desktop', lo
   //    creep so the frame never feels frozen. No orbit, no aggressive zoom.
   tl.fromTo(
     target,
-    { radius: v.camera.settle.radius, height: v.camera.settle.height, lookY: v.camera.settle.lookY },
+    // Returns FROM the pushed radius: continuous chain hero -> settle (0.08)
+    // -> pushed (0.2) -> hold (0.56) -> exit (0.62), never a snap.
+    {
+      radius: v.camera.settle.radius - ABOUT_CAMERA_PUSH.radiusIn,
+      height: v.camera.settle.height,
+      lookY: v.camera.settle.lookY,
+    },
     { radius: v.camera.hold.radius, height: v.camera.hold.height, lookY: v.camera.hold.lookY, duration: 0.28 },
     0.28
   )
   tl.fromTo(
     target,
-    { lookX: v.lookX.settle + v.lookXFollow * v.character.aboutX },
+    { lookX: v.lookX.push },
     { lookX: v.lookX.hold, duration: 0.28 },
     0.28
   )
@@ -311,14 +341,16 @@ export const createAboutTimeline = ({ target, stage = null, view = 'desktop', lo
   )
 
   // 7) STAGE - softens where the viewport is text-dominant (small screens),
-  //    then dissolves as Skills arrives (first stage tween renders immediately
-  //    so the layer always starts fully present).
+  //    then dissolves ONLY in the hand-over window (0.74 -> 0.94): the copy has
+  //    receded, the character has walked to his Skills-side position still
+  //    inside the frame, and the Skills panel is arriving. The first stage
+  //    tween renders immediately so the layer always starts fully present.
   if (stage) {
     if (v.stage.settled < 1) {
       tl.fromTo(stage, { opacity: 1 }, { opacity: v.stage.settled, duration: 0.1, immediateRender: true }, 0.08)
-      tl.fromTo(stage, { opacity: v.stage.settled }, { opacity: 0, duration: 0.16, ease: 'power1.in' }, 0.68)
+      tl.fromTo(stage, { opacity: v.stage.settled }, { opacity: 0, duration: 0.2, ease: 'power1.in' }, 0.74)
     } else {
-      tl.fromTo(stage, { opacity: 1 }, { opacity: 0, duration: 0.16, ease: 'power1.in', immediateRender: true }, 0.68)
+      tl.fromTo(stage, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: 'power1.in', immediateRender: true }, 0.74)
     }
   }
 

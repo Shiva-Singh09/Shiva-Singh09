@@ -28,7 +28,7 @@ import './About.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Shared reveal primitive: opacity + rise + defocus — transform/opacity only
+// Shared reveal primitive: opacity + slide/rise + defocus — transform/opacity only
 // (plus one small blur on text blocks, as specified) so scrub frames stay cheap.
 // `hide: true` also toggles visibility and is reserved for interactive blocks
 // (the voice controls) so hidden buttons are never tabbable. Text blocks use
@@ -83,13 +83,15 @@ export default function About() {
       // 01 / ABOUT ME — small, secondary, cinematic (never typed).
       const labelTl = beat(labelRef.current, B.label)
       reveal(labelTl, labelRef.current, { x: -40, y: 0, blur: 7, duration: 1 })
-      reveal(labelTl, titleRef.current, { y: 18, blur: 6, duration: 1 }, 0.5)
+      reveal(labelTl, titleRef.current, { x: -50, y: 0, blur: 6, duration: 1 }, 0.5)
 
       // Primary heading, then the role slightly later — one complete statement
-      // each; the role never becomes more dominant than the heading.
+      // each; the role never becomes more dominant than the heading. Both
+      // enter from the LEFT, in step with the camera's push toward the
+      // character (see aboutChoreography.js: label/lead open the shot).
       const leadTl = beat(greetingRef.current, B.lead)
-      reveal(leadTl, greetingRef.current, { y: 35, blur: 7, scale: 0.985, duration: 1 })
-      reveal(leadTl, roleRef.current, { y: 25, blur: 6, duration: 0.9 }, 0.55)
+      reveal(leadTl, greetingRef.current, { x: -70, y: 0, blur: 7, scale: 0.985, duration: 1 })
+      reveal(leadTl, roleRef.current, { x: -45, y: 0, blur: 6, duration: 0.9 }, 0.55)
 
       // Introduction — one coherent block (never line-by-line), then the
       // supporting pillars and the voice controls.
