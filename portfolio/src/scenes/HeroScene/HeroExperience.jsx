@@ -23,6 +23,7 @@ import HeroLighting from './HeroLighting.jsx'
 import HeroFloor from './HeroFloor.jsx'
 import HeroEnvironment from './HeroEnvironment.jsx'
 import HeroCameraRig from './HeroCameraRig.jsx'
+import HeroSceneProbe, { SCENE_PROBE_ENABLED } from './HeroSceneProbe.jsx'
 import { HERO_CAMERA, HERO_LAYOUT, resolveHeroTiming } from './heroChoreography.js'
 import { ABOUT_SCROLL, createAboutTimeline } from './aboutChoreography.js'
 
@@ -257,6 +258,8 @@ export default function HeroExperience({
       />
       <HeroLighting choreo={choreo} tier={tier} />
       <HeroCameraRig choreo={choreo} />
+      {/* Read-only runtime probe (?sceneDebug=1 / dev server only). */}
+      {SCENE_PROBE_ENABLED ? <HeroSceneProbe choreo={choreo} /> : null}
     </group>
   )
 }

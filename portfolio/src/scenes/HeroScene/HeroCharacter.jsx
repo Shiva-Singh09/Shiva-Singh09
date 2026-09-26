@@ -164,7 +164,9 @@ export default function HeroCharacter({ choreo, phase, reducedMotion, onClips })
   })
 
   return (
-    <group ref={group} visible={phase !== 'loading'}>
+    // Named so the opt-in runtime probe (HeroSceneProbe) can measure this
+    // instance's world transform without reaching into component internals.
+    <group ref={group} name="hero-character-root" visible={phase !== 'loading'}>
       <group position={[0, lift, 0]} scale={scale}>
         <primitive object={scene} />
       </group>

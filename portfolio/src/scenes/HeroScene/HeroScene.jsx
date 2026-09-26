@@ -47,6 +47,9 @@ export default function HeroScene({ scrollRef }) {
         yaw: reducedMotion ? HERO_LAYOUT.faceYaw : HERO_LAYOUT.walkYaw,
         orbitAngle: 0,
         lookX: 0,
+        // Namaste channel: 0 in Hero (no gesture). The About timeline is the
+        // only writer; a number here keeps GSAP's property validation happy.
+        greet: 0,
         radius: reducedMotion ? HERO_CAMERA.front.radius : HERO_CAMERA.wide.radius,
         height: reducedMotion ? HERO_CAMERA.front.height : HERO_CAMERA.wide.height,
         lookY: reducedMotion ? HERO_CAMERA.front.lookY : HERO_CAMERA.wide.lookY,

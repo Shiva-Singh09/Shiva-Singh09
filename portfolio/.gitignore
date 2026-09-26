@@ -18,3 +18,6 @@ yarn-error.log*
 .vscode/
 .idea/
 .DS_Store
+
+# Verification artifacts (screenshots + logs from scripts/scene-probe.mjs)
+.probe/
