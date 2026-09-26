@@ -15,8 +15,13 @@ export default function ContactExperience({ progress, reducedMotion, onPhase }) 
       onPhase?.('settled')
       return undefined
     }
+    // Resolve the section element explicitly (same reason as ProjectsExperience:
+    // an unresolved trigger throws inside ScrollTrigger.refresh() and can leave
+    // every other trigger with stale bounds).
+    const triggerEl = document.getElementById('contact')
+    if (!triggerEl) return undefined
     const st = ScrollTrigger.create({
-      trigger: '#contact',
+      trigger: triggerEl,
       start: 'top 80%',
       end: 'bottom 55%',
       scrub: 0.6,

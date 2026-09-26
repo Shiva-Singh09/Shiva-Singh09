@@ -2,6 +2,7 @@
 import { Component, useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import SkillsExperience from './SkillsExperience.jsx'
+import { SKILLS_CHARACTER } from './skillsChoreography.js'
 
 class Boundary extends Component {
   constructor(props) {
@@ -40,6 +41,21 @@ export default function SkillsCanvas({ tier, reducedMotion, onStage, onShook, on
     () => ({ drop: 0, open: 0, glow: 0, stage: 0, flat: 0, shake: 0 }),
     []
   )
+  // Shared choreography object for the character (same shape/convention as the
+  // Hero + About shots): written by the section timeline, read per frame by
+  // SceneCharacter. Starts off-frame, walking in — never parked on his mark.
+  const choreo = useMemo(
+    () => ({
+      current: {
+        charX: SKILLS_CHARACTER.enterX,
+        charZ: SKILLS_CHARACTER.standZ,
+        yaw: SKILLS_CHARACTER.walkYaw,
+        pose: null,
+        lean: 0,
+      },
+    }),
+    []
+  )
   return (
     <Boundary onError={onError}>
       <Canvas
@@ -53,6 +69,7 @@ export default function SkillsCanvas({ tier, reducedMotion, onStage, onShook, on
         <ShakeRig progress={progress}>
           <SkillsExperience
             progress={progress}
+            choreo={choreo}
             tier={tier}
             reducedMotion={reducedMotion}
             onStage={onStage}

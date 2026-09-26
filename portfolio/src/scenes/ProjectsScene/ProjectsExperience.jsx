@@ -13,8 +13,15 @@ export default function ProjectsExperience({ progress, tier, reducedMotion, coun
       onStep?.(-1)
       return undefined
     }
+    // Resolve the section element explicitly: a string trigger that fails to
+    // resolve leaves ScrollTrigger holding an undefined element, and the next
+    // ScrollTrigger.refresh() then throws on
+    // `undefined.getBoundingClientRect` - aborting the refresh for every other
+    // trigger (the Hero → About shot included) and leaving stale bounds.
+    const triggerEl = document.getElementById('projects')
+    if (!triggerEl) return undefined
     const st = ScrollTrigger.create({
-      trigger: '#projects',
+      trigger: triggerEl,
       start: 'top 70%',
       end: 'bottom 60%',
       scrub: 0.6,
